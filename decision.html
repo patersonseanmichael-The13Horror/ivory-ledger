@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>The Ivory Ledger — Decision</title>
+<script>
+fetch("decision.txt")
+.then(r => r.text())
+.then(result => {
+if(result.includes("accepted.html")){
+window.location="accepted.html";
+}else{
+window.location="declined.html";
+}
+});
+</script>
+</head>
+<body>
+Redirecting...
+</body>
+</html>
