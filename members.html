@@ -10,7 +10,16 @@
 <div class="center">
 
 <h1>Members Portal</h1>
+<p id="member"></p>
 
+<script>
+var member = localStorage.getItem("memberName");
+if(member){
+  document.getElementById("member").innerHTML = "Welcome, " + member;
+}else{
+  window.location = "login.html";
+}
+</script>
 <p class="lore">
 Status: Initiate Hall<br>
 Clearance: Ground Floor
@@ -58,6 +67,7 @@ Top Floor — Sovereign Suite<br>
 </body>
 </html>
   
+
 
 
 
