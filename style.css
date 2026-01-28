@@ -2,10 +2,7 @@ body {
 	margin:0;
 	color:#F2E8D5;
 	font-family:Monsterrat;
-	background:
-	linear-gradient(rgba(0,0,0,0.7),
-	rgba(0,0,0,0.7)),
-	url("images/background.jpg");
+	background: url(ivory.jpg);
 	background-size:cover;
 	background-position:center;
 	}
@@ -86,4 +83,5 @@ body {
 													}
 													
 													}
+
 							
