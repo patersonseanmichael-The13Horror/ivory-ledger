@@ -12,6 +12,7 @@
 <h1>Members Portal</h1>
 <p id="member"></p>
 <p id="floor"></p>
+  <p id="balance"></p>
 
 <script>
 var member = localStorage.getItem("memberName");
@@ -23,6 +24,8 @@ if(!member){
 
 document.getElementById("member").innerHTML = "Welcome, " + member;
 document.getElementById("floor").innerHTML = "Current Floor: " + floor;
+  var bal = localStorage.getItem("balance");
+document.getElementById("balance").innerHTML = "Wallet Balance: $" + bal;
 
 // unlock executive if upgraded
 if(floor === "Executive"){
@@ -63,6 +66,7 @@ Top Floor — Sovereign Suite<br>
 <h2>Access Areas</h2>
 
 <button onclick="location.href='casino.html'">Casino Floor</button><br><br>
+  <button onclick="location.href='deposit.html'">Deposit Funds</button><br><br>
 <button onclick="location.href='upgrade.html'">Request Executive Consideration</button><br><br>
 <button id="executiveBtn" onclick="location.href='executive-denied.html'">Executive Floor (Stallion Lounge)</button>
 <hr>
@@ -78,6 +82,7 @@ Top Floor — Sovereign Suite<br>
 </body>
 </html>
   
+
 
 
 
