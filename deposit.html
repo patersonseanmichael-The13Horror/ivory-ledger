@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Deposit — The Ivory Ledger</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div class="center">
+
+<h1>Deposit Funds</h1>
+
+<input id="amount" placeholder="Enter amount"><br><br>
+
+<button onclick="deposit()">Confirm Deposit</button><br><br>
+
+<button onclick="location.href='members.html'">Return</button>
+
+<script>
+function deposit(){
+  var amt = parseFloat(document.getElementById("amount").value);
+  if(amt > 0){
+    var bal =
+    parseFloat(localStorage.getItem("balance"));
+    bal += amt;
+    localStorage.setItem("balance", bal);
+    alert("Deposit Successful");
+  }
+}
+</script>
+
+</div>
+</body>
+</html>
