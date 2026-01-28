@@ -24,7 +24,7 @@ if(!member){
 
 document.getElementById("member").innerHTML = "Welcome, " + member;
 document.getElementById("floor").innerHTML = "Current Floor: " + floor;
-  var bal = localStorage.getItem("balance");
+  var bal = parseFloat(localStorage.getItem("balance") || 0).toFixed(2);
 document.getElementById("balance").innerHTML = "Wallet Balance: $" + bal;
 
 // unlock executive if upgraded
@@ -82,6 +82,7 @@ Top Floor — Sovereign Suite<br>
 </body>
 </html>
   
+
 
 
 
