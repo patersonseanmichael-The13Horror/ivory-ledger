@@ -11,13 +11,24 @@
 
 <h1>Members Portal</h1>
 <p id="member"></p>
+<p id="floor"></p>
 
 <script>
 var member = localStorage.getItem("memberName");
-if(member){
-  document.getElementById("member").innerHTML = "Welcome, " + member;
-}else{
+var floor = localStorage.getItem("floor");
+
+if(!member){
   window.location = "login.html";
+}
+
+document.getElementById("member").innerHTML = "Welcome, " + member;
+document.getElementById("floor").innerHTML = "Current Floor: " + floor;
+
+// unlock executive if upgraded
+if(floor === "Executive"){
+  document.getElementById("executiveBtn").onclick = function(){
+    window.location = "stallions.html";
+  }
 }
 </script>
 <p class="lore">
@@ -67,6 +78,7 @@ Top Floor — Sovereign Suite<br>
 </body>
 </html>
   
+
 
 
 
