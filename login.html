@@ -19,10 +19,16 @@ function login(){
   var name = document.getElementById("name").value;
   if(name.length > 0){
     localStorage.setItem("memberName", name);
+
+    if(!localStorage.getItem("floor")){
+      localStorage.setItem("floor","Ground");
+    }
+
     window.location = "members.html";
   }
 }
 </script>
 </div>
 </body>
+
 </html>
