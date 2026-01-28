@@ -22,8 +22,8 @@ function deposit(){
   if(amt > 0){
     var bal =
     parseFloat(localStorage.getItem("balance"));
-    bal += amt;
-    localStorage.setItem("balance", bal);
+   bal = bal + amt;
+localStorage.setItem("balance", bal.toFixed(2));
     alert("Deposit Successful");
   }
 }
@@ -31,4 +31,5 @@ function deposit(){
 
 </div>
 </body>
+
 </html>
