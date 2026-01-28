@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Member Login — The Ivory Ledger</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div class="center">
+
+<h1>Member Login</h1>
+
+<input id="name" placeholder="Member Name"><br><br>
+
+<button onclick="login()">Enter</button>
+
+<script>
+function login(){
+  var name = document.getElementById("name").value;
+  if(name.length > 0){
+    localStorage.setItem("memberName", name);
+    window.location = "members.html";
+  }
+}
+</script>
+</div>
+</body>
+</html>
