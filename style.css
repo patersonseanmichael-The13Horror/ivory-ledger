@@ -10,7 +10,7 @@ body{
   margin:0;
   padding:0;
   min-height:100vh;
-  background:url("images/background.jpg") center/cover no-repeat fixed;
+ background:url("background.jpg") center/cover no-repeat fixed;
   color:white;
   font-family:Georgia, serif;
   letter-spacing:.5px;
@@ -178,3 +178,4 @@ button:hover{
   button{font-size:14px;}
 }
   
+
