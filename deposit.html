@@ -10,9 +10,31 @@
 
 <h1>Deposit Funds</h1>
 
+<div class="paybox">
+
+<h3>PayID / Osko Payment</h3>
+
+<p><strong>Name:</strong> Sean Paterson</p>
+<p><strong>PayID:</strong> 0417 979 350</p>
+<p><strong>Reason:</strong> Online Shopping</p>
+
+</div>
+
+<br>
+
+<p>After sending payment, upload screenshot for review:</p>
+
+  <input type="file" id="receipt"><br><br>
+
+<button onclick="submitReceipt()">Submit For Review</button>
+
+<br><br>
+
+<hr>
+
 <input id="amount" placeholder="Enter amount"><br><br>
 
-<button onclick="deposit()">Confirm Deposit</button><br><br>
+<button onclick="deposit()">Manual Credit (Testing)</button><br><br>
 
 <button onclick="location.href='members.html'">Return</button>
 
@@ -20,16 +42,24 @@
 function deposit(){
   var amt = parseFloat(document.getElementById("amount").value);
   if(amt > 0){
-    var bal =
-    parseFloat(localStorage.getItem("balance"));
-   bal = bal + amt;
-localStorage.setItem("balance", bal.toFixed(2));
-    alert("Deposit Successful");
+    var bal = parseFloat(localStorage.getItem("balance") || 0);
+    bal = bal + amt;
+    localStorage.setItem("balance", bal.toFixed(2));
+    alert("Deposit Applied");
+  }
+}
+
+function submitReceipt(){
+  var file = document.getElementById("receipt").files[0];
+  if(file){
+    localStorage.setItem("pendingDeposit","true");
+    alert("Receipt submitted for review.");
+  }else{
+    alert("Please attach payment screenshot.");
   }
 }
 </script>
 
 </div>
 </body>
-
 </html>
