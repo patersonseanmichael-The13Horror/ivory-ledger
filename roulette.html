@@ -1,22 +1,170 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Roulette — The Ivory Ledger</title>
+<title>Roulette — Executive Floor</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-<div class="center">
 
-<h1>Roulette</h1>
+<div class="center execTable">
 
-<p class="lore">
-One wheel.
-Infinite outcomes.
+<h1>Executive Roulette</h1>
 
-Place your conviction.
-</p>
+<div class="paybox gold">Dealer: Valentina</div>
+
+<div class="paybox">
+<label>Bet Amount</label><br>
+<input id="betInput" type="number" value="100" min="10" step="10">
+<div id="chips"></div>
+</div>
+
+<div class="paybox">
+<p>Bet Color</p>
+<button onclick="placeColor('red')">Red</button>
+<button onclick="placeColor('black')">Black</button>
+<button onclick="placeColor('green')">Green (0)</button>
+</div>
+
+<div class="paybox">
+<p>Or Pick Number (0–36)</p>
+<input id="numPick" type="number" min="0" max="36" placeholder="Number">
+<button onclick="placeNumber()">Bet Number</button>
+</div>
+
+<div id="status"></div>
+
+<div id="wheel">🎡</div>
+
+<button id="spinBtn" disabled onclick="spin()">Spin Wheel</button>
+
+<br>
+
+<button class="ghostBtn" onclick="location.href='casino.html'">Return to Casino</button>
+
+<script>
+let choice=null;
+let choiceNumber=null;
+let bet=0;
+let balance=0;
+
+function buildChips(){
+ chips.innerHTML="";
+ let count=Math.min(6,Math.floor(bet/50)+1);
+ for(let i=0;i<count;i++){
+   let c=document.createElement("div");
+   c.className="chip";
+   chips.appendChild(c);
+ }
+}
+
+function placeColor(c){
+ choice=c;
+ choiceNumber=null;
+ status.innerHTML="Selected: "+c.toUpperCase();
+ spinBtn.disabled=false;
+}
+
+function placeNumber(){
+ let n=parseInt(numPick.value);
+ if(isNaN(n)||n<0||n>36){ alert("Invalid number"); return; }
+ choiceNumber=n;
+ choice=null;
+ status.innerHTML="Selected Number: "+n;
+ spinBtn.disabled=false;
+}
+
+function spin(){
+ bet=parseFloat(betInput.value);
+ balance=parseFloat(localStorage.getItem("balance")||0);
+
+ if(isNaN(bet)||bet<=0){alert("Invalid bet");return;}
+ if(balance<bet){alert("Insufficient balance");return;}
+
+ buildChips();
+
+ balance-=bet;
+
+ wheel.style.animation="spin 1.5s linear";
+
+ setTimeout(()=>{
+   let number=Math.floor(Math.random()*37);
+   let color="green";
+   if(number!==0){
+     color=(number%2===0)?"black":"red";
+   }
+
+   let payout=0;
+
+   if(choiceNumber!==null){
+     if(number===choiceNumber) payout=bet*35;
+   }else if(choice!==null){
+     if(color===choice){
+       payout=(choice==="green")?(bet*14):(bet*2);
+     }
+   }
+
+   if(payout>0) balance+=payout;
+
+   localStorage.setItem("balance",balance.toFixed(2));
+
+   showResult(number,color,payout);
+
+ },1500);
+}
+
+function showResult(num,col,pay){
+ let result=(pay>0)?`YOU WIN +$${pay}`:`YOU LOSE -$${bet}`;
+
+ document.body.innerHTML=`
+ <div class="center execTable">
+   <h1>${num} — ${col.toUpperCase()}</h1>
+   <h2>${result}</h2>
+   <p>Dealer Valentina clears the wheel.</p>
+   <button onclick="location.href='members.html'">Return to Members</button>
+ </div>
+ `;
+}
+</script>
+
+<style>
+.execTable{
+ background:radial-gradient(circle at center,#320000,#050000);
+}
+
+.gold{
+ border:1px solid rgba(255,215,0,.4);
+ box-shadow:0 0 18px rgba(255,215,0,.2);
+}
+
+#wheel{
+ font-size:48px;
+ margin:20px;
+}
+
+@keyframes spin{
+ from{transform:rotate(0deg);}
+ to{transform:rotate(720deg);}
+}
+
+#chips{
+ display:flex;
+ justify-content:center;
+ margin-top:10px;
+}
+
+.chip{
+ width:26px;
+ height:26px;
+ border-radius:50%;
+ background:crimson;
+ margin-left:-8px;
+ box-shadow:0 2px 6px rgba(0,0,0,.6);
+ border:2px solid white;
+}
+</style>
 
 </div>
+
 </body>
 </html>
