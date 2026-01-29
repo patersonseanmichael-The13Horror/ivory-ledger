@@ -32,22 +32,7 @@
 
 <hr>
 
-<input id="amount" placeholder="Enter amount"><br><br>
-
-<button onclick="deposit()">Manual Credit (Testing)</button><br><br>
-
 <button onclick="location.href='members.html'">Return</button>
-
-<script>
-function deposit(){
-  var amt = parseFloat(document.getElementById("amount").value);
-  if(amt > 0){
-    var bal = parseFloat(localStorage.getItem("balance") || 0);
-    bal = bal + amt;
-    localStorage.setItem("balance", bal.toFixed(2));
-    alert("Deposit Applied");
-  }
-}
 
 function submitReceipt(){
   var file = document.getElementById("receipt").files[0];
@@ -63,3 +48,4 @@ function submitReceipt(){
 </div>
 </body>
 </html>
+
