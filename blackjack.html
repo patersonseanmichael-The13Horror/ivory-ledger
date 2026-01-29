@@ -9,15 +9,30 @@
 
 <div class="center">
 
-<h1>Blackjack Table</h1>
+<h1>Blackjack</h1>
 
 <div class="paybox">
 Dealer: Valentina
 </div>
 
 <div class="paybox">
-<p>Your Hand: <span id="player"></span></p>
-<p>Dealer Hand: <span id="dealer"></span></p>
+<label>Bet Amount</label><br>
+<input id="betInput" type="number" value="100" min="10" step="10">
+<button onclick="startGame()">Place Bet</button>
+</div>
+
+<div id="game" style="display:none">
+
+<div class="paybox">
+<p>Your Cards</p>
+<div id="playerCards"></div>
+<p>Total: <span id="playerTotal"></span></p>
+</div>
+
+<div class="paybox">
+<p>Dealer Cards</p>
+<div id="dealerCards"></div>
+<p>Total: <span id="dealerTotal"></span></p>
 </div>
 
 <div id="status"></div>
@@ -25,72 +40,107 @@ Dealer: Valentina
 <button onclick="hit()">Hit</button>
 <button onclick="stand()">Stand</button>
 
+</div>
+
 <br>
 
-  <button class="ghostBtn" onclick="location.href='casino.html'">Return to Casino</button>
+<button class="ghostBtn" onclick="location.href='casino.html'">Return to Casino</button>
 
 <script>
-let bet=100;
-let balance=parseFloat(localStorage.getItem("balance")||0);
-
-if(balance<bet){
- alert("Insufficient Balance");
- location.href="members.html";
-}
-
-balance-=bet;
-localStorage.setItem("balance",balance.toFixed(2));
+let bet=0;
+let balance=0;
+let player=[];
+let dealer=[];
+let playing=false;
 
 function card(){
- return Math.floor(Math.random()*10)+2;
+  const faces=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+  let f=faces[Math.floor(Math.random()*faces.length)];
+  let v = (f==="A")?11:(["J","Q","K"].includes(f)?10:parseInt(f));
+  return {face:f,val:v};
 }
 
-let playerTotal=card()+card();
-let dealerTotal=card()+card();
+function total(hand){
+  let t=hand.reduce((a,b)=>a+b.val,0);
+  let aces=hand.filter(c=>c.face==="A").length;
+  while(t>21 && aces>0){ t-=10; aces--; }
+  return t;
+}
 
-update();
+function render(){
+  playerCards.innerHTML=player.map(c=>`🂠 ${c.face}`).join(" ");
+  dealerCards.innerHTML=dealer.map(c=>`🂠 ${c.face}`).join(" ");
+  playerTotal.innerHTML=total(player);
+  dealerTotal.innerHTML=total(dealer);
+}
 
-  function update(){
- document.getElementById("player").innerHTML=playerTotal;
- document.getElementById("dealer").innerHTML=dealerTotal;
+function startGame(){
+  bet=parseFloat(betInput.value);
+  balance=parseFloat(localStorage.getItem("balance")||0);
+
+  if(isNaN(bet)||bet<=0){ alert("Invalid bet"); return; }
+  if(balance<bet){ alert("Insufficient balance"); return; }
+
+  balance-=bet;
+  localStorage.setItem("balance",balance.toFixed(2));
+
+  document.getElementById("game").style.display="block";
+
+  player=[card(),card()];
+  dealer=[card(),card()];
+  playing=true;
+  render();
 }
 
 function hit(){
- playerTotal+=card();
- update();
+  if(!playing) return;
+  player.push(card());
+  render();
 
- if(playerTotal>21){
-   endGame("BUST","-"+bet);
- }
+  if(total(player)>21){
+    endGame("BUST","-"+bet);
+  }
 }
 
 function stand(){
- while(dealerTotal<17){
-   dealerTotal+=card();
- }
+  if(!playing) return;
+  playing=false;
 
- update();
+  // Dealer animation draw
+  let draw=setInterval(()=>{
+    if(total(dealer)<17){
+      dealer.push(card());
+      render();
+    }else{
+      clearInterval(draw);
+      resolve();
+    }
+  },700);
+}
 
- if(dealerTotal>21 || playerTotal>dealerTotal){
-   let win=(bet*2).toFixed(2);
+function resolve(){
+  let p=total(player);
+  let d=total(dealer);
 
-  balance=parseFloat(localStorage.getItem("balance"))+parseFloat(win);
-   localStorage.setItem("balance",balance.toFixed(2));
-   endGame("YOU WIN","+$"+win);
- }else{
-   endGame("DEALER WINS","-"+bet);
- }
+  if(d>21 || p>d){
+    let win=(bet*2).toFixed(2);
+    balance=parseFloat(localStorage.getItem("balance"))+parseFloat(win);
+    localStorage.setItem("balance",balance.toFixed(2));
+    endGame("YOU WIN","+$"+win);
+  }else{
+    endGame("DEALER WINS","-"+bet);
+  }
 }
 
 function endGame(title,amount){
- document.body.innerHTML=`
- <div class="center">
-   <h1>${title}</h1>
-   <h2>${amount}</h2>
-   <p>Dealer Valentina nods silently.</p>
-   <button onclick="location.href='members.html'">Return to Members</button>
- </div>
- `;
+  document.body.innerHTML=`
+  <div class="center">
+    <h1>${title}</h1>
+    <h2>${amount}</h2>
+    <p>Dealer Valentina closes the deck.</p>
+    <button onclick="location.href='members.html'">Return to Members</button>
+  </div>
+  `;
 }
 </script>
 
