@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>High Roller Winners — The Ivory Ledger</title>
+<title>High Roller Winners</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -11,43 +11,29 @@
 
 <h1>High Roller Winners</h1>
 
-<div id="winners" style="width:100%;"></div>
+<div id="winners"></div>
 
-<br>
 <button onclick="location.href='members.html'">Return</button>
 
-</div>
-
 <script>
-function randomMobile(){
-  let end = Math.floor(Math.random()*90 + 10);
-  return "04******" + end;
+function mobile(){
+  return "04******" + Math.floor(Math.random()*90+10);
+}
+function win(){
+  return (Math.floor(Math.random()*80+20)*1000).toLocaleString();
 }
 
-function randomWin(){
-  return (Math.floor(Math.random()*80 + 20) * 1000).toLocaleString();
-}
-
-const tiers = [
-  {name:"Ground", class:"tierGround"},
-  {name:"Premium", class:"tierPremium"},
-  {name:"Executive", class:"tierExecutive"},
-  {name:"Sovereign", class:"tierSovereign"}
-];
-
-let container = document.getElementById("winners");
+const tiers=["Ground","Premium","Executive","Sovereign"];
 
 for(let i=0;i<10;i++){
-  let tier = tiers[Math.floor(Math.random()*tiers.length)];
-
-  let row = document.createElement("div");
-  row.className = "winnerRow " + tier.class;
-  row.innerHTML = randomMobile() + " — $" + randomWin() + " <span>(" + tier.name + ")</span>";
-  container.appendChild(row);
+  let d=document.createElement("div");
+  d.className="winnerRow tier"+tiers[Math.floor(Math.random()*4)];
+  d.innerHTML=mobile()+" — $"+win();
+  winners.appendChild(d);
 }
 </script>
 
+</div>
+
 </body>
-
 </html>
-
