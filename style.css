@@ -129,6 +129,7 @@ font-size: 14px;
 .tierSovereign{
   box-shadow: 0 0 14px rgba(138,43,226,.8);
 }
+
 /* Mobile tweak */
 @media(max-width:600px){
   .winnerRow{
@@ -142,18 +143,6 @@ font-size: 14px;
   border-radius:14px;
   max-width:400px;
   margin:auto;
-}
-
-.depositWrap{
-  max-width:420px;
-  margin:auto;
-}
-
-.paybox{
-  background: rgba(0,0,0,.65);
-  padding:18px;
-  border-radius:18px;
-  margin-bottom:20px;
 }
 
 .uploadBox{
@@ -266,4 +255,6 @@ input{
   button{font-size:14px;}
 }
 
-
+#winners{
+  display:block !important;
+}
