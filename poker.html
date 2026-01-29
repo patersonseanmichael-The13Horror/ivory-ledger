@@ -33,6 +33,24 @@ Dealer: Valentina
 <button class="ghostBtn" onclick="location.href='casino.html'">Return</button>
 
 <script>
+function addGame(wager, win){
+ let w=parseFloat(localStorage.getItem("wagered")||0);
+ let wo=parseFloat(localStorage.getItem("won")||0);
+ let g=parseInt(localStorage.getItem("games")||0);
+
+ w+=wager;
+ if(win>0) wo+=win;
+ g++;
+
+ localStorage.setItem("wagered",w.toFixed(2));
+ localStorage.setItem("won",wo.toFixed(2));
+ localStorage.setItem("games",g);
+}
+
+function isExecutive(){
+ return (localStorage.getItem("tier")==="Executive");
+}
+  
 let countdown=120;
 let selected=parseFloat(localStorage.getItem("pokerBuyIn")||100);
 
@@ -120,3 +138,4 @@ function showResult(title,amount){
 
 </body>
 </html>
+
