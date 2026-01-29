@@ -6,7 +6,8 @@
 </head>
 
 <body>
-<div class="center">
+
+<div class="center depositWrap">
 
 <h1>Deposit Funds</h1>
 
@@ -20,22 +21,18 @@
 
 </div>
 
-<br><br>
-  
-  <button onclick="location.href='members.html'">Return</button>
+<div class="uploadBox">
+  <label class="fileBtn">
+Upload Payment Screenshot
+<input type="file" id="receipt" hidden>
+</label>
+</div>
 
-<p>After sending payment, upload screenshot for review:</p>
+<button class="primaryBtn" onclick="submitReceipt()">Submit For Review</button>
 
-  <input type="file" id="receipt"><br><br>
+<button class="ghostBtn" onclick="location.href='members.html'">Return</button>
 
-<button onclick="submitReceipt()">Submit For Review</button>
-
-<br><br>
-
-<hr>
-
-<button onclick="location.href='members.html'">Return</button>
-
+<script>
 function submitReceipt(){
   var file = document.getElementById("receipt").files[0];
   if(file){
@@ -48,7 +45,6 @@ function submitReceipt(){
 </script>
 
 </div>
-</body>
+
+  </body>
 </html>
-
-
