@@ -24,21 +24,49 @@ Only precision wins here.
 
 </div>
 
-<p>Select Buy-In</p>
+<div id="status"></div>
 
-  <button onclick="buyIn(100)">$100 Buy-In</button>
+  <p>Select Buy-In</p>
+
+<button onclick="buyIn(100)">$100 Buy-In</button>
 <button onclick="buyIn(500)">$500 Buy-In</button>
 <button onclick="buyIn(1000)">$1,000 Buy-In</button>
 <button onclick="buyIn(5000)">$5,000 High Roller</button>
 
 <br>
 
+<button id="joinBtn" disabled onclick="joinTable()">Join Table</button>
+
+<br>
+
 <button class="ghostBtn" onclick="location.href='casino.html'">Return to Casino</button>
 
 <script>
-function buyIn(amount){
-  localStorage.setItem("pokerBuyIn",amount);
-  alert("Buy-In Selected: $" + amount);
+let selected=0;
+
+  function buyIn(amount){
+  let bal=parseFloat(localStorage.getItem("balance")||0);
+
+  if(bal < amount){
+    alert("Insufficient Balance");
+    return;
+  }
+
+  selected=amount;
+  document.getElementById("status").innerHTML="Selected Buy-In: $"+amount;
+  document.getElementById("joinBtn").disabled=false;
+}
+
+function joinTable(){
+  let bal=parseFloat(localStorage.getItem("balance")||0);
+
+  if(selected>0){
+    bal-=selected;
+
+    localStorage.setItem("balance",bal.toFixed(2));
+    alert("Joined Poker Table with $"+selected);
+    location.href="members.html";
+  }
 }
 </script>
 
