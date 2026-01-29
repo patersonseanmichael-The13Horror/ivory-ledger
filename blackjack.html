@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Blackjack — The Ivory Ledger</title>
+<title>Blackjack — Executive Table</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="center">
+<div class="center execTable">
 
-<h1>Blackjack</h1>
+<h1>Executive Blackjack</h1>
 
-<div class="paybox">
+<div class="paybox gold">
 Dealer: Valentina
 </div>
 
@@ -19,23 +19,23 @@ Dealer: Valentina
 <label>Bet Amount</label><br>
 <input id="betInput" type="number" value="100" min="10" step="10">
 <button onclick="startGame()">Place Bet</button>
+
+<div id="chips"></div>
 </div>
 
 <div id="game" style="display:none">
 
 <div class="paybox">
 <p>Your Cards</p>
-<div id="playerCards"></div>
+<div id="playerCards" class="cards"></div>
 <p>Total: <span id="playerTotal"></span></p>
 </div>
 
 <div class="paybox">
 <p>Dealer Cards</p>
-<div id="dealerCards"></div>
+<div id="dealerCards" class="cards"></div>
 <p>Total: <span id="dealerTotal"></span></p>
 </div>
-
-<div id="status"></div>
 
 <button onclick="hit()">Hit</button>
 <button onclick="stand()">Stand</button>
@@ -53,96 +53,166 @@ let player=[];
 let dealer=[];
 let playing=false;
 
+const suits=["♠","♥","♦","♣"];
+const faces=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+
 function card(){
-  const faces=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
-  let f=faces[Math.floor(Math.random()*faces.length)];
-  let v = (f==="A")?11:(["J","Q","K"].includes(f)?10:parseInt(f));
-  return {face:f,val:v};
+ let f=faces[Math.floor(Math.random()*faces.length)];
+ let s=suits[Math.floor(Math.random()*suits.length)];
+ let v=(f==="A")?11:(["J","Q","K"].includes(f)?10:parseInt(f));
+ return {face:f,suit:s,val:v};
 }
 
 function total(hand){
-  let t=hand.reduce((a,b)=>a+b.val,0);
-  let aces=hand.filter(c=>c.face==="A").length;
-  while(t>21 && aces>0){ t-=10; aces--; }
-  return t;
+ let t=hand.reduce((a,b)=>a+b.val,0);
+ let aces=hand.filter(c=>c.face==="A").length;
+ while(t>21 && aces>0){ t-=10; aces--; }
+ return t;
+}
+
+function drawCards(el,hand){
+ el.innerHTML="";
+ hand.forEach(c=>{
+   let d=document.createElement("div");
+   d.className="card";
+   d.innerHTML=`${c.face}<br>${c.suit}`;
+   el.appendChild(d);
+ });
 }
 
 function render(){
-  playerCards.innerHTML=player.map(c=>`🂠 ${c.face}`).join(" ");
-  dealerCards.innerHTML=dealer.map(c=>`🂠 ${c.face}`).join(" ");
-  playerTotal.innerHTML=total(player);
-  dealerTotal.innerHTML=total(dealer);
+ drawCards(playerCards,player);
+ drawCards(dealerCards,dealer);
+ playerTotal.innerHTML=total(player);
+ dealerTotal.innerHTML=total(dealer);
+}
+
+function buildChips(){
+ chips.innerHTML="";
+ let count=Math.min(6,Math.floor(bet/50)+1);
+ for(let i=0;i<count;i++){
+   let c=document.createElement("div");
+   c.className="chip";
+   chips.appendChild(c);
+ }
 }
 
 function startGame(){
-  bet=parseFloat(betInput.value);
-  balance=parseFloat(localStorage.getItem("balance")||0);
+ bet=parseFloat(betInput.value);
+ balance=parseFloat(localStorage.getItem("balance")||0);
 
-  if(isNaN(bet)||bet<=0){ alert("Invalid bet"); return; }
-  if(balance<bet){ alert("Insufficient balance"); return; }
+ if(isNaN(bet)||bet<=0){alert("Invalid bet");return;}
+ if(balance<bet){alert("Insufficient balance");return;}
 
-  balance-=bet;
-  localStorage.setItem("balance",balance.toFixed(2));
+ balance-=bet;
+ localStorage.setItem("balance",balance.toFixed(2));
 
-  document.getElementById("game").style.display="block";
+ buildChips();
 
-  player=[card(),card()];
-  dealer=[card(),card()];
-  playing=true;
-  render();
+ document.getElementById("game").style.display="block";
+
+ player=[card(),card()];
+ dealer=[card(),card()];
+ playing=true;
+ render();
 }
 
 function hit(){
-  if(!playing) return;
-  player.push(card());
-  render();
-
-  if(total(player)>21){
-    endGame("BUST","-"+bet);
-  }
+ if(!playing) return;
+ player.push(card());
+ render();
+ if(total(player)>21){
+   endGame("BUST","-"+bet);
+ }
 }
 
 function stand(){
-  if(!playing) return;
-  playing=false;
+ if(!playing) return;
+ playing=false;
 
-  // Dealer animation draw
-  let draw=setInterval(()=>{
-    if(total(dealer)<17){
-      dealer.push(card());
-      render();
-    }else{
-      clearInterval(draw);
-      resolve();
-    }
-  },700);
+ let draw=setInterval(()=>{
+   if(total(dealer)<17){
+     dealer.push(card());
+     render();
+   }else{
+     clearInterval(draw);
+     resolve();
+   }
+ },700);
 }
 
 function resolve(){
-  let p=total(player);
-  let d=total(dealer);
+ let p=total(player);
+ let d=total(dealer);
 
-  if(d>21 || p>d){
-    let win=(bet*2).toFixed(2);
-    balance=parseFloat(localStorage.getItem("balance"))+parseFloat(win);
-    localStorage.setItem("balance",balance.toFixed(2));
-    endGame("YOU WIN","+$"+win);
-  }else{
-    endGame("DEALER WINS","-"+bet);
-  }
+ if(d>21 || p>d){
+   let win=(bet*2).toFixed(2);
+   balance=parseFloat(localStorage.getItem("balance"))+parseFloat(win);
+   localStorage.setItem("balance",balance.toFixed(2));
+   endGame("YOU WIN","+$"+win);
+ }else{
+   endGame("DEALER WINS","-"+bet);
+ }
 }
 
 function endGame(title,amount){
-  document.body.innerHTML=`
-  <div class="center">
-    <h1>${title}</h1>
-    <h2>${amount}</h2>
-    <p>Dealer Valentina closes the deck.</p>
-    <button onclick="location.href='members.html'">Return to Members</button>
-  </div>
-  `;
+ document.body.innerHTML=`
+ <div class="center execTable">
+   <h1>${title}</h1>
+   <h2>${amount}</h2>
+   <p>Dealer Valentina closes the deck.</p>
+   <button onclick="location.href='members.html'">Return to Members</button>
+ </div>
+ `;
 }
 </script>
+
+<style>
+.execTable{
+ background:radial-gradient(circle at center,#320000,#050000);
+}
+
+.gold{
+ border:1px solid rgba(255,215,0,.4);
+ box-shadow:0 0 18px rgba(255,215,0,.2);
+}
+
+.cards{
+ display:flex;
+ gap:8px;
+ justify-content:center;
+}
+
+.card{
+ width:48px;
+ height:68px;
+ background:white;
+ color:black;
+ border-radius:8px;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ font-weight:bold;
+ box-shadow:0 4px 10px rgba(0,0,0,.6);
+}
+
+#chips{
+ display:flex;
+ justify-content:center;
+ margin-top:10px;
+}
+
+.chip{
+ width:26px;
+ height:26px;
+ border-radius:50%;
+ background:crimson;
+ margin-left:-8px;
+ box-shadow:0 2px 6px rgba(0,0,0,.6);
+ border:2px solid white;
+}
+</style>
 
 </div>
 
