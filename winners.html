@@ -20,7 +20,6 @@
 
 <script>
 function randomMobile(){
-  // format: 04******54
   let end = Math.floor(Math.random()*90 + 10);
   return "04******" + end;
 }
@@ -29,15 +28,25 @@ function randomWin(){
   return (Math.floor(Math.random()*80 + 20) * 1000).toLocaleString();
 }
 
+const tiers = [
+  {name:"Ground", class:"tierGround"},
+  {name:"Premium", class:"tierPremium"},
+  {name:"Executive", class:"tierExecutive"},
+  {name:"Sovereign", class:"tierSovereign"}
+];
+
 let container = document.getElementById("winners");
 
 for(let i=0;i<10;i++){
+  let tier = tiers[Math.floor(Math.random()*tiers.length)];
+
   let row = document.createElement("div");
-  row.className = "winnerRow";
-  row.innerHTML = randomMobile() + " — $" + randomWin();
+  row.className = "winnerRow " + tier.class;
+  row.innerHTML = randomMobile() + " — $" + randomWin() + " <span>(" + tier.name + ")</span>";
   container.appendChild(row);
 }
 </script>
 
 </body>
+
 </html>
