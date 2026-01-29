@@ -17,8 +17,8 @@
 
 <p>
 Welcome to The Ivory Ledger Poker Floor.<br>
-Cards are freshly shuffled.  
-High stakes. Silent tables.  
+Cards are freshly shuffled.<br>
+High stakes. Silent tables.<br>
 Only precision wins here.
 </p>
 
@@ -26,14 +26,21 @@ Only precision wins here.
 
 <p>Select Buy-In</p>
 
-<button>$100 Buy-In</button>
-<button>$500 Buy-In</button>
-<button>$1,000 Buy-In</button>
-<button>$5,000 High Roller</button>
+  <button onclick="buyIn(100)">$100 Buy-In</button>
+<button onclick="buyIn(500)">$500 Buy-In</button>
+<button onclick="buyIn(1000)">$1,000 Buy-In</button>
+<button onclick="buyIn(5000)">$5,000 High Roller</button>
 
 <br>
 
 <button class="ghostBtn" onclick="location.href='casino.html'">Return to Casino</button>
+
+<script>
+function buyIn(amount){
+  localStorage.setItem("pokerBuyIn",amount);
+  alert("Buy-In Selected: $" + amount);
+}
+</script>
 
 </div>
 
