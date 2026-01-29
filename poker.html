@@ -44,7 +44,7 @@ Only precision wins here.
 <script>
 let selected=0;
 
-  function buyIn(amount){
+function buyIn(amount){
   let bal=parseFloat(localStorage.getItem("balance")||0);
 
   if(bal < amount){
@@ -60,13 +60,24 @@ let selected=0;
 function joinTable(){
   let bal=parseFloat(localStorage.getItem("balance")||0);
 
-  if(selected>0){
-    bal-=selected;
+  if(selected<=0) return;
 
-    localStorage.setItem("balance",bal.toFixed(2));
-    alert("Joined Poker Table with $"+selected);
-    location.href="members.html";
+  bal-=selected;
+
+  // Random win or loss
+  let win=Math.random()>.5;
+
+  if(win){
+    let multiplier=(Math.random()*2+.5).toFixed(2);
+    let payout=selected*multiplier;
+    bal+=payout;
+    alert("You won $" + payout.toFixed(2));
+  }else{
+    alert("Hand lost.");
   }
+
+  localStorage.setItem("balance",bal.toFixed(2));
+  location.href="members.html";
 }
 </script>
 
@@ -74,3 +85,4 @@ function joinTable(){
 
 </body>
 </html>
+
