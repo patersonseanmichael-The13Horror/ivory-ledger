@@ -6,17 +6,95 @@
 </head>
 
 <body>
+
 <div class="center">
 
-<h1>Blackjack</h1>
+<h1>Blackjack Table</h1>
 
-<p class="lore">
-Calculated risk.
-Measured reward.
+<div class="paybox">
+Dealer: Valentina
+</div>
 
-The house respects discipline.
-</p>
+<div class="paybox">
+<p>Your Hand: <span id="player"></span></p>
+<p>Dealer Hand: <span id="dealer"></span></p>
+</div>
+
+<div id="status"></div>
+
+<button onclick="hit()">Hit</button>
+<button onclick="stand()">Stand</button>
+
+<br>
+
+  <button class="ghostBtn" onclick="location.href='casino.html'">Return to Casino</button>
+
+<script>
+let bet=100;
+let balance=parseFloat(localStorage.getItem("balance")||0);
+
+if(balance<bet){
+ alert("Insufficient Balance");
+ location.href="members.html";
+}
+
+balance-=bet;
+localStorage.setItem("balance",balance.toFixed(2));
+
+function card(){
+ return Math.floor(Math.random()*10)+2;
+}
+
+let playerTotal=card()+card();
+let dealerTotal=card()+card();
+
+update();
+
+  function update(){
+ document.getElementById("player").innerHTML=playerTotal;
+ document.getElementById("dealer").innerHTML=dealerTotal;
+}
+
+function hit(){
+ playerTotal+=card();
+ update();
+
+ if(playerTotal>21){
+   endGame("BUST","-"+bet);
+ }
+}
+
+function stand(){
+ while(dealerTotal<17){
+   dealerTotal+=card();
+ }
+
+ update();
+
+ if(dealerTotal>21 || playerTotal>dealerTotal){
+   let win=(bet*2).toFixed(2);
+
+  balance=parseFloat(localStorage.getItem("balance"))+parseFloat(win);
+   localStorage.setItem("balance",balance.toFixed(2));
+   endGame("YOU WIN","+$"+win);
+ }else{
+   endGame("DEALER WINS","-"+bet);
+ }
+}
+
+function endGame(title,amount){
+ document.body.innerHTML=`
+ <div class="center">
+   <h1>${title}</h1>
+   <h2>${amount}</h2>
+   <p>Dealer Valentina nods silently.</p>
+   <button onclick="location.href='members.html'">Return to Members</button>
+ </div>
+ `;
+}
+</script>
 
 </div>
+
 </body>
 </html>
