@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Members Portal — The Ivory Ledger</title>
+<title>Members — The Ivory Ledger</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -10,88 +10,29 @@
 <div class="center">
 
 <h1>Members Portal</h1>
-<p id="member"></p>
-<p id="floor"></p>
-  <p id="balance"></p>
+
+<div id="balance"></div>
+
+<br>
+
+<button onclick="location.href='casino.html'">Casino Floor</button>
+<button onclick="location.href='deposit.html'">Deposit</button>
+<button onclick="location.href='winners.html'">High Roller Winners</button>
+<button onclick="location.href='terms.html'">Terms</button>
 
 <script>
-  if(isNaN(parseFloat(localStorage.getItem("balance")))){
+let bal = parseFloat(localStorage.getItem("balance"));
+
+if(isNaN(bal)){
+  bal = 0;
   localStorage.setItem("balance","0.00");
 }
-var member = localStorage.getItem("memberName");
-var floor = localStorage.getItem("floor");
 
-if(!member){
-  window.location = "login.html";
-}
-
-document.getElementById("member").innerHTML = "Welcome, " + member;
-document.getElementById("floor").innerHTML = "Current Floor: " + floor;
-  var bal = parseFloat(localStorage.getItem("balance") || 0).toFixed(2);
-document.getElementById("balance").innerHTML = "Wallet Balance: $" + bal;
-
-// unlock executive if upgraded
-if(floor === "Executive"){
-  document.getElementById("executiveBtn").onclick = function(){
-    window.location = "stallions.html";
-  }
-}
+document.getElementById("balance").innerHTML =
+"Wallet Balance: $" + bal.toFixed(2);
 </script>
-<p class="lore">
-Status: Initiate Hall<br>
-Clearance: Ground Floor
-</p>
 
-<hr>
-
-<p class="lore">
-You have entered The Ivory Ledger.
-
-Progress through the floors by consistency, discipline, and fortune.
-
-Each elevation unlocks deeper privileges.
-  </p>
-
-<hr>
-
-<h2>Floors</h2>
-
-<p class="lore">
-Ground Floor — Initiate Hall<br>
-First Floor — Gilded Entry<br>
-Premium Floor — Ivory Circle<br>
-Executive Floor — Stallion Lounge<br>
-Top Floor — Sovereign Suite<br>
-</p>
-
-<hr>
-
-<h2>Access Areas</h2>
-<button onclick="location.href='winners.html'">High Roller Winners</button>
-<button onclick="location.href='casino.html'">Casino Floor</button><br><br>
-  <button onclick="location.href='deposit.html'">Deposit Funds</button><br><br>
-<button onclick="location.href='upgrade.html'">Request Executive Consideration</button><br><br>
-<button id="executiveBtn" onclick="location.href='executive-denied.html'">Executive Floor (Stallion Lounge)</button>
-<hr>
-
-<p style="font-size:12px;opacity:0.8;">
-<a href="terms.html">Terms</a> |
-<a href="privacy.html">Privacy</a> |
-<a href="responsibilities.html">Responsibilities</a> |
-<a href="responsible.html">Responsible Gaming</a>
-</p>
-  </div>
+</div>
 
 </body>
 </html>
-  
-
-
-
-
-
-
-
-
-
-
