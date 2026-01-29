@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Entering Game — The Ivory Ledger</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div class="center">
+
+<h1 id="game"></h1>
+<p id="status"></p>
+
+<button onclick="location.href='casino.html'">Return to Casino</button>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const game = params.get("g");
+document.getElementById("game").innerHTML = "Entering " + game;
+
+var bal = parseFloat(localStorage.getItem("balance") || 0);
+
+if(bal >= 10){
+  bal -= 10;
+  localStorage.setItem("balance", bal.toFixed(2));
+  document.getElementById("status").innerHTML = "Entry fee $10 accepted.";
+}else{
+  document.getElementById("status").innerHTML = "Insufficient funds.";
+}
+</script>
+
+</div>
+</body>
+</html>
