@@ -100,3 +100,25 @@ font-size: 14px;
 
 }
 
+#winners{
+  width:100%;
+  max-width:400px;
+  margin:auto;
+}
+
+.winnerRow{
+  background: rgba(0,0,0,0.55);
+  padding:12px;
+  margin:8px 0;
+  border-radius:12px;
+  font-size:16px;
+}
+
+/* Mobile tweak */
+@media(max-width:600px){
+  .winnerRow{
+    font-size:14px;
+  }
+}
+
+
