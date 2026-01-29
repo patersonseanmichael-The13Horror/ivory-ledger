@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>High Roller Winners — The Ivory Ledger</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="center">
+
+<h1>High Roller Winners</h1>
+
+<div id="winners"></div>
+
+<br>
+<button onclick="location.href='members.html'">Return</button>
+
+</div>
+
+<script>
+function randomMobile(){
+  // format: 04******54
+  let end = Math.floor(Math.random()*90 + 10);
+  return "04******" + end;
+}
+
+function randomWin(){
+  return (Math.floor(Math.random()*80 + 20) * 1000).toLocaleString();
+}
+
+let container = document.getElementById("winners");
+
+for(let i=0;i<10;i++){
+  let row = document.createElement("div");
+  row.className = "winnerRow";
+  row.innerHTML = randomMobile() + " — $" + randomWin();
+  container.appendChild(row);
+}
+</script>
+
+</body>
+</html>
