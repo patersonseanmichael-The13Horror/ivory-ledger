@@ -114,11 +114,27 @@ font-size: 14px;
   font-size:16px;
 }
 
+.tierGround{
+  box-shadow: 0 0 6px rgba(200,200,200,.4);
+}
+
+.tierPremium{
+  box-shadow: 0 0 10px rgba(255,215,0,.6);
+}
+
+.tierExecutive{
+  box-shadow: 0 0 12px rgba(150,0,0,.7);
+}
+
+.tierSovereign{
+  box-shadow: 0 0 14px rgba(138,43,226,.8);
+}
 /* Mobile tweak */
 @media(max-width:600px){
   .winnerRow{
     font-size:14px;
   }
 }
+
 
 
