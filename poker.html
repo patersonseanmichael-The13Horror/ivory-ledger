@@ -9,80 +9,114 @@
 
 <div class="center">
 
-<h1>Poker Room</h1>
+<h1>Poker Table</h1>
 
-<div class="paybox">
+<div id="dealer" class="paybox">
+Dealer: Valentina
+</div>
 
-<h3>Dealer: Valentina</h3>
+<div id="table">
 
-<p>
-Welcome to The Ivory Ledger Poker Floor.<br>
-Cards are freshly shuffled.<br>
-High stakes. Silent tables.<br>
-Only precision wins here.
-</p>
+<div class="seat you">You</div>
+<div class="seat empty" id="s1">Empty</div>
+<div class="seat empty" id="s2">Empty</div>
+<div class="seat empty" id="s3">Empty</div>
 
 </div>
 
-<div id="status"></div>
-
-  <p>Select Buy-In</p>
-
-<button onclick="buyIn(100)">$100 Buy-In</button>
-<button onclick="buyIn(500)">$500 Buy-In</button>
-<button onclick="buyIn(1000)">$1,000 Buy-In</button>
-<button onclick="buyIn(5000)">$5,000 High Roller</button>
+  <div id="timer">Waiting for players: 120</div>
 
 <br>
 
-<button id="joinBtn" disabled onclick="joinTable()">Join Table</button>
+<button onclick="startHand()">Play Hand</button>
 
-<br>
-
-<button class="ghostBtn" onclick="location.href='casino.html'">Return to Casino</button>
+<button class="ghostBtn" onclick="location.href='casino.html'">Return</button>
 
 <script>
-let selected=0;
+let countdown=120;
+let selected=parseFloat(localStorage.getItem("pokerBuyIn")||100);
 
-function buyIn(amount){
-  let bal=parseFloat(localStorage.getItem("balance")||0);
-
-  if(bal < amount){
-    alert("Insufficient Balance");
-    return;
-  }
-
-  selected=amount;
-  document.getElementById("status").innerHTML="Selected Buy-In: $"+amount;
-  document.getElementById("joinBtn").disabled=false;
+function fillAI(){
+ document.querySelectorAll(".empty").forEach(e=>{
+   if(Math.random()>.4){
+     e.innerHTML="AI Player";
+     e.classList.remove("empty");
+   }
+ });
 }
 
-function joinTable(){
-  let bal=parseFloat(localStorage.getItem("balance")||0);
+  let t=setInterval(()=>{
+ countdown--;
+ document.getElementById("timer").innerHTML="Waiting for players: "+countdown;
 
-  if(selected<=0) return;
+ if(countdown%20===0) fillAI();
 
-  bal-=selected;
+ if(countdown<=0){
+   clearInterval(t);
+   fillAI();
+   document.getElementById("timer").innerHTML="Table Ready";
+ }
+},1000);
 
-  // Random win or loss
-  let win=Math.random()>.5;
+function startHand(){
+ let bal=parseFloat(localStorage.getItem("balance")||0);
+ if(bal<selected){
+   alert("Insufficient balance");
+   return;
+ }
+
+ bal-=selected;
+
+ let win=Math.random()>.5;
 
   if(win){
-    let multiplier=(Math.random()*2+.5).toFixed(2);
-    let payout=selected*multiplier;
-    bal+=payout;
-    alert("You won $" + payout.toFixed(2));
-  }else{
-    alert("Hand lost.");
-  }
+   let payout=(selected*(Math.random()*2+.5)).toFixed(2);
+   bal=parseFloat(bal)+parseFloat(payout);
+   localStorage.setItem("balance",bal.toFixed(2));
+   showResult("WIN","+$"+payout);
+ }else{
+   localStorage.setItem("balance",bal.toFixed(2));
+   showResult("LOSS","-"+selected);
+ }
+}
 
-  localStorage.setItem("balance",bal.toFixed(2));
-  location.href="members.html";
+function showResult(title,amount){
+ document.body.innerHTML=`
+ <div class="center">
+   <h1>${title}</h1>
+   <h2>${amount}</h2>
+   <p>Dealer Valentina thanks you.</p>
+   <button onclick="location.href='members.html'">Return to Members</button>
+ </div>
+ `;
 }
 </script>
 
-</div>
+  </div>
+
+<style>
+#table{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:12px;
+ max-width:300px;
+ margin:20px auto;
+}
+
+.seat{
+ background:rgba(0,0,0,.6);
+ padding:14px;
+ border-radius:14px;
+}
+
+.you{
+ border:2px solid crimson;
+}
+
+.empty{
+ opacity:.5;
+}
+</style>
 
 </body>
 </html>
-
