@@ -304,6 +304,8 @@ input{
   text-shadow:0 0 25px rgba(255,215,0,.4);
 }
 
+url("ancient-bull.jpg");
+
 /* Mobile polish */
 @media(max-width:600px){
   h1{font-size:22px;}
