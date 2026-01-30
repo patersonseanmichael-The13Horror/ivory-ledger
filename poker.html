@@ -1,3 +1,4 @@
+Html
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,35 +12,40 @@
 
 <h1>Poker Table</h1>
 
-<div id="dealer" class="paybox">
-Dealer: Valentina
-</div>
+<div class="paybox">Dealer: Valentina</div>
 
 <div id="table">
-
 <div class="seat you">You</div>
-<div class="seat empty" id="s1">Empty</div>
-<div class="seat empty" id="s2">Empty</div>
-<div class="seat empty" id="s3">Empty</div>
-
+<div class="seat empty">Empty</div>
+<div class="seat empty">Empty</div>
+<div class="seat empty">Empty</div>
 </div>
 
-  <div id="timer">Waiting for players: 120</div>
-
-<br>
-
 <button onclick="startHand()">Play Hand</button>
-
 <button class="ghostBtn" onclick="location.href='casino.html'">Return</button>
 
 <script>
+let selected=parseFloat(localStorage.getItem("pokerBuyIn")||100);
+
+function logTx(type, amount, note){
+ let tx=JSON.parse(localStorage.getItem("tx")||"[]");
+ tx.unshift({
+   time:new Date().toLocaleString(),
+   type:type,
+   amount:amount,
+   note:note||""
+ });
+ tx=tx.slice(0,100); // keep last 100
+ localStorage.setItem("tx",JSON.stringify(tx));
+}
+
 function addGame(wager, win){
  let w=parseFloat(localStorage.getItem("wagered")||0);
  let wo=parseFloat(localStorage.getItem("won")||0);
  let g=parseInt(localStorage.getItem("games")||0);
 
  w+=wager;
- if(win>0) wo+=win;
+ if(win>0) wo+=parseFloat(win);
  g++;
 
  localStorage.setItem("wagered",w.toFixed(2));
@@ -47,95 +53,45 @@ function addGame(wager, win){
  localStorage.setItem("games",g);
 }
 
-function isExecutive(){
- return (localStorage.getItem("tier")==="Executive");
-}
-  
-let countdown=120;
-let selected=parseFloat(localStorage.getItem("pokerBuyIn")||100);
-
-function fillAI(){
- document.querySelectorAll(".empty").forEach(e=>{
-   if(Math.random()>.4){
-     e.innerHTML="AI Player";
-     e.classList.remove("empty");
-   }
- });
-}
-
-  let t=setInterval(()=>{
- countdown--;
- document.getElementById("timer").innerHTML="Waiting for players: "+countdown;
-
- if(countdown%20===0) fillAI();
-
- if(countdown<=0){
-   clearInterval(t);
-   fillAI();
-   document.getElementById("timer").innerHTML="Table Ready";
- }
-},1000);
-
 function startHand(){
  let bal=parseFloat(localStorage.getItem("balance")||0);
- if(bal<selected){
-   alert("Insufficient balance");
-   return;
- }
+ if(bal<selected){alert("Insufficient balance");return;}
 
  bal-=selected;
 
  let win=Math.random()>.5;
 
-  if(win){
+ if(win){
    let payout=(selected*(Math.random()*2+.5)).toFixed(2);
-   bal=parseFloat(bal)+parseFloat(payout);
+   bal+=parseFloat(payout);
    localStorage.setItem("balance",bal.toFixed(2));
-   showResult("WIN","+$"+payout);
+   addGame(selected,payout);
+   show("WIN","+$"+payout);
+   logTx("Poker Win", payout, "Hand won");
  }else{
    localStorage.setItem("balance",bal.toFixed(2));
-   showResult("LOSS","-"+selected);
+   addGame(selected,0);
+   show("LOSS","-"+selected);
+  logTx("Poker Loss", -selected, "Hand lost");
  }
 }
 
-function showResult(title,amount){
+function show(t,a){
  document.body.innerHTML=`
  <div class="center">
-   <h1>${title}</h1>
-   <h2>${amount}</h2>
-   <p>Dealer Valentina thanks you.</p>
-   <button onclick="location.href='members.html'">Return to Members</button>
- </div>
- `;
+   <h1>${t}</h1>
+   <h2>${a}</h2>
+   <button onclick="location.href='members.html'">Return</button>
+ </div>`;
 }
 </script>
 
-  </div>
-
 <style>
-#table{
- display:grid;
- grid-template-columns:repeat(2,1fr);
- gap:12px;
- max-width:300px;
- margin:20px auto;
-}
-
-.seat{
- background:rgba(0,0,0,.6);
- padding:14px;
- border-radius:14px;
-}
-
-.you{
- border:2px solid crimson;
-}
-
-.empty{
- opacity:.5;
-}
+#table{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.seat{background:#111;padding:12px;border-radius:12px}
+.you{border:2px solid crimson}
 </style>
 
+</div>
 </body>
 </html>
-

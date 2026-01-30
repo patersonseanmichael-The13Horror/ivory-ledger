@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Roulette — Executive Floor</title>
+<title>Executive Roulette</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -9,172 +9,94 @@
 
 <div class="center execTable">
 
-<h1>Executive Roulette</h1>
-
+<h1>Roulette</h1>
 <div id="history"></div>
 
-<div class="paybox gold">Dealer: Valentina</div>
+<input id="betInput" value="100">
 
-<div class="paybox">
-<label>Bet Amount</label><br>
-<input id="betInput" type="number" value="100" min="10" step="10">
-<div id="chips"></div>
-</div>
-
-<div class="paybox">
-<p>Select Number</p>
 <div id="grid"></div>
-</div>
 
-<div class="paybox">
 <button onclick="placeColor('red')">Red</button>
 <button onclick="placeColor('black')">Black</button>
 <button onclick="placeColor('green')">Green</button>
-</div>
 
 <div id="status"></div>
-
-<div id="wheel">🎡</div>
-
-<button id="spinBtn" disabled onclick="spin()">Spin Wheel</button>
-
-<br>
-
-<button class="ghostBtn" onclick="location.href='casino.html'">Return to Casino</button>
+<button onclick="spin()">Spin</button>
 
 <script>
-function addGame(wager, win){
- let w=parseFloat(localStorage.getItem("wagered")||0);
+let choice=null,betNum=null,hist=[];
+
+function logTx(type, amount, note){
+ let tx=JSON.parse(localStorage.getItem("tx")||"[]");
+ tx.unshift({
+   time:new Date().toLocaleString(),
+   type:type,
+   amount:amount,
+   note:note||""
+ });
+ tx=tx.slice(0,100); // keep last 100
+ localStorage.setItem("tx",JSON.stringify(tx));
+}
+
+function addGame(w,wins){
+ let wg=parseFloat(localStorage.getItem("wagered")||0);
  let wo=parseFloat(localStorage.getItem("won")||0);
  let g=parseInt(localStorage.getItem("games")||0);
-
- w+=wager;
- if(win>0) wo+=win;
- g++;
-
- localStorage.setItem("wagered",w.toFixed(2));
+ wg+=w; if(wins>0) wo+=parseFloat(wins); g++;
+ localStorage.setItem("wagered",wg.toFixed(2));
  localStorage.setItem("won",wo.toFixed(2));
  localStorage.setItem("games",g);
 }
 
-function isExecutive(){
- return (localStorage.getItem("tier")==="Executive");
-}
- 
-let choice=null;
-let betNum=null;
-let history=[];
-
-function buildGrid(){
- for(let i=0;i<=36;i++){
-   let d=document.createElement("div");
-   d.className="cell";
-   d.innerHTML=i;
-   d.onclick=()=>pick(i);
-   grid.appendChild(d);
- }
+for(let i=0;i<=36;i++){
+ let d=document.createElement("div");
+ d.className="cell"; d.innerHTML=i;
+ d.onclick=()=>{betNum=i;choice=null;};
+ grid.appendChild(d);
 }
 
-buildGrid();
-
-function pick(n){
- betNum=n;
- choice=null;
- status.innerHTML="Selected Number: "+n;
- spinBtn.disabled=false;
-}
-
-function placeColor(c){
- choice=c;
- betNum=null;
- status.innerHTML="Selected: "+c.toUpperCase();
- spinBtn.disabled=false;
-}
-
-function buildChips(b){
- chips.innerHTML="";
- let c=Math.min(6,Math.floor(b/50)+1);
- for(let i=0;i<c;i++){
-  let d=document.createElement("div");
-  d.className="chip";
-  chips.appendChild(d);
- }
-}
+function placeColor(c){choice=c;betNum=null;}
 
 function spin(){
  let bet=parseFloat(betInput.value);
- let bal=parseFloat(localStorage.getItem("balance")||0);
-
- if(isNaN(bet)||bet<=0){alert("Invalid bet");return;}
- if(bal<bet){alert("Insufficient balance");return;}
-
- buildChips(bet);
+ let
+ bal=parseFloat(localStorage.getItem("balance")||0);
+ if(bal<bet){alert("No balance");return;}
  bal-=bet;
 
- wheel.style.animation="spin 1.5s linear";
+ let num=Math.floor(Math.random()*37);
+ let col="green"; if(num!==0) col=(num%2===0)?"black":"red";
 
- setTimeout(()=>{
-  let num=Math.floor(Math.random()*37);
-  let col="green";
-  if(num!==0) col=(num%2===0)?"black":"red";
+ hist.unshift(num); hist=hist.slice(0,8);
+ history.innerHTML=hist.join(" ");
 
-  history.unshift({n:num,c:col});
-  history=history.slice(0,8);
-  drawHistory();
+ let exec=(localStorage.getItem("tier")==="Executive");
+ let payout=0;
 
-  let payout=0;
+ if(betNum!==null){ if(num===betNum) payout=bet*(exec?40:35);}
+ else if(choice===col){ payout=(col==="green")?bet*14:bet*(exec?2.2:2);}
 
-  if(betNum!==null){
-    if(num===betNum) payout=bet*35;
-  }else if(choice){
-    if(choice===col){
-      payout=(col==="green")?(bet*14):(bet*2);
-    }
-  }
-
-  if(payout>0) bal+=payout;
-
-  localStorage.setItem("balance",bal.toFixed(2));
-  show(num,col,payout,bet);
-
- },1500);
+ if(payout>0) bal+=payout;
+ localStorage.setItem("balance",bal.toFixed(2));
+ addGame(bet,payout);
+ 
+ if(payout>0){
+ logTx("Roulette Win", payout, "Number/Color hit");
+}else{
+ logTx("Roulette Loss", -bet, "Spin lost");
 }
 
-function drawHistory(){
- historyDiv.innerHTML="";
- history.forEach(h=>{
-  let s=document.createElement("span");
-  s.innerHTML=h.n;
-  s.style.color=(h.c==="red")?"crimson":(h.c==="black")?"white":"lime";
-  historyDiv.appendChild(s);
- });
-}
-
-function show(n,c,p,b){
- let res=p>0?`YOU WIN +$${p}`:`YOU LOSE -$${b}`;
- document.body.innerHTML=`
- <div class="center execTable">
-  <h1>${n} — ${c.toUpperCase()}</h1>
-  <h2>${res}</h2>
-  <button onclick="location.href='members.html'">Return to Members</button>
- </div>
- `;
+ document.body.innerHTML=`<div class="center execTable"><h1>${num} ${col}</h1><h2>${payout>0?"+$"+payout:"-$"+bet}</h2><button
+ execTable"><h1>${num} ${col}</h1><h2>${payout>0?"+$"+payout:"-$"+bet}</h2><button onclick="location.href='members.html'">Return</button></div>`;
 }
 </script>
 
 <style>
-.execTable{background:radial-gradient(circle,#320000,#050000)}
-.gold{border:1px solid gold;box-shadow:0 0 18px rgba(255,215,0,.2)}
+.execTable{background:#200}
 #grid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
-.cell{padding:6px;background:#111;border-radius:6px}
-#history span{margin:4px;font-weight:bold}
-#wheel{font-size:48px;margin:12px}
-#chips{display:flex;justify-content:center;margin:8px}
-.chip{width:26px;height:26px;border-radius:50%;background:crimson;margin-left:-8px;border:2px solid white}
+.cell{background:#111;padding:6px;border-radius:6px}
 </style>
 
 </div>
-
 </body>
 </html>
-

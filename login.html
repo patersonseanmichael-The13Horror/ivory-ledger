@@ -23,12 +23,13 @@ function login(){
     if(!localStorage.getItem("floor")){
       localStorage.setItem("floor","Ground");
     }
-
+if(!localStorage.getItem("balance")){
+  localStorage.setItem("balance","0");
+}
     window.location = "members.html";
   }
 }
 </script>
 </div>
 </body>
-
 </html>

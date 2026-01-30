@@ -35,12 +35,16 @@ Upload Payment Screenshot
 <script>
 function submitReceipt(){
   var file = document.getElementById("receipt").files[0];
-  if(file){
-    localStorage.setItem("pendingDeposit","true");
-    alert("Receipt submitted for review.");
-  }else{
-    alert("Please attach payment screenshot.");
-  }
+  if(!file){ alert("Please attach payment screenshot."); return; }
+  let amt = prompt("Enter deposit amount:");
+  if(!amt || isNaN(amt)) return;
+  let bal = parseFloat(localStorage.getItem("balance")||0);
+  bal += parseFloat(amt);
+  localStorage.setItem("balance", bal.toFixed(2));
+  let tx = JSON.parse(localStorage.getItem("tx")||"[]");
+  tx.unshift({time:new Date().toLocaleString(),type:"Deposit",amount:parseFloat(amt),note:"Manual PayID deposit"});
+  localStorage.setItem("tx",JSON.stringify(tx));
+  alert("Deposit credited.");
 }
 </script>
 

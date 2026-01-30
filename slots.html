@@ -1,67 +1,152 @@
 <!DOCTYPE html>
 <html>
-<head><link rel="stylesheet" href="style.css"></head>
+<head>
+<title>Ivory Ledger Executive Slots</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
 <body>
 
-<div class="center">
+<div class="center execTable">
+
 <h1>Executive Slots</h1>
 
-<div class="reels" id="r"></div>
+<div class="paybox gold">
+Jackpot: $<span id="jackpot"></span>
+</div>
 
-<p>Jackpot: $<span id="j"></span></p>
+<div class="paybox">
+Bet: $
+<input id="bet" type="number" step="0.10" value="0.10" min="0.10">
+<button onclick="spin()">SPIN</button>
+<p id="free"></p>
+</div>
 
-<button onclick="spin()">Spin ($0.10)</button>
-<p id="res"></p>
+<div id="reels"></div>
 
-<button onclick="location.href='members.html'">Return</button>
+<div id="result"></div>
+
+<button class="ghostBtn" onclick="location.href='members.html'">Return</button>
 
 <script>
-let symbols=["🍒","💎","7","🐂","🔒"];
-let bet=.1;
+let symbols=[
+ {s:"🍒",w:40,p:2},
+ {s:"🔔",w:25,p:4},
+ {s:"💎",w:15,p:10},
+ {s:"🐂",w:10,p:25},
+ {s:"👑",w:6,p:60},
+ {s:"🏛",w:3,p:0},
+ {s:"⭐",w:1,p:100}
+];
 
-function logTx(t,a){let tx=JSON.parse(localStorage.getItem("tx")||"[]");tx.unshift({time:new Date().toLocaleString(),type:t,amount:a});localStorage.setItem("tx",JSON.stringify(tx));}
-function addGame(w,win){
- localStorage.setItem("wagered",parseFloat(localStorage.getItem("wagered"))+w);
- localStorage.setItem("won",parseFloat(localStorage.getItem("won"))+(win||0));
- localStorage.setItem("games",parseInt(localStorage.getItem("games"))+1);
+let freeSpins=parseInt(localStorage.getItem("freeSpins")||0);
+let jackpot=parseFloat(localStorage.getItem("jackpot")||31986.32);
+jackpotEl.innerHTML=jackpot.toFixed(2);
+
+function logTx(type, amount, note){
+ let tx=JSON.parse(localStorage.getItem("tx")||"[]");
+ tx.unshift({
+   time:new Date().toLocaleString(),
+   type:type,
+   amount:amount,
+   note:note||""
+ });
+ tx=tx.slice(0,100); // keep last 100
+ localStorage.setItem("tx",JSON.stringify(tx));
+}
+
+function addGame(w,wins){
+ let wg=parseFloat(localStorage.getItem("wagered")||0);
+ let wo=parseFloat(localStorage.getItem("won")||0);
+ let g=parseInt(localStorage.getItem("games")||0);
+ wg+=w; if(wins>0) wo+=wins; g++;
+ localStorage.setItem("wagered",wg.toFixed(2));
+ localStorage.setItem("won",wo.toFixed(2));
+ localStorage.setItem("games",g);
+}
+
+function pick(){
+ let pool=[];
+ symbols.forEach(o=>{
+  for(let i=0;i<o.w;i++) pool.push(o);
+ });
+ return pool[Math.floor(Math.random()*pool.length)];
 }
 
 function spin(){
- let bal=parseFloat(localStorage.getItem("balance"));
- if(bal<bet)return;
- bal-=bet;
+ let betAmt=parseFloat(bet.value);
+ let bal=parseFloat(localStorage.getItem("balance")||0);
 
- let reels=[];
- for(let i=0;i<5;i++) reels.push(symbols[Math.floor(Math.random()*symbols.length)]);
- r.innerHTML=reels.join(" ");
-
- let win=0;
- if(reels.every(x=>x===reels[0])){
-  win=bet*50;
+ if(freeSpins<=0){
+   if(bal<betAmt){alert("Insufficient balance");return;}
+   bal-=betAmt;
+ }else{
+   freeSpins--;
  }
 
- let jp=parseFloat(localStorage.getItem("jackpot"));
- jp+=bet;
- if(Math.random()<0.00005){
-  win+=jp;
-  jp=1000;
-  logTx("Jackpot",win);
+ let exec=(localStorage.getItem("tier")==="Executive");
+
+ jackpot+=betAmt*0.05;
+ localStorage.setItem("jackpot",jackpot.toFixed(2));
+ jackpotEl.innerHTML=jackpot.toFixed(2);
+
+ reels.innerHTML="";
+ let row=[];
+
+ for(let i=0;i<5;i++){
+   let c=pick();
+   row.push(c);
+   let d=document.createElement("div");
+   d.className="slot";
+   d.innerHTML=c.s;
+   reels.appendChild(d);
  }
 
- bal+=win;
- localStorage.setItem("jackpot",jp.toFixed(2));
+ let payout=0;
+
+ let match=row.every(r=>r.s===row[0].s);
+
+ if(match){
+   if(row[0].s==="🏛"){
+     freeSpins+=10;
+     result.innerHTML="🏛 BONUS — 10 Free Spins!";
+   }else{
+     payout=betAmt*row[0].p*(exec?1.1:1);
+     bal+=payout;
+     result.innerHTML="WIN +$"+payout.toFixed(2);
+   }
+ }
+
+ if(Math.random()<0.00005*(exec?2:1)){
+   bal+=jackpot;
+   result.innerHTML="JACKPOT WON $"+jackpot.toFixed(2);
+   logTx("Jackpot", jackpot, "Executive Jackpot");
+   jackpot=10000;
+ }
+
+ localStorage.setItem("freeSpins",freeSpins);
+ localStorage.setItem("jackpot",jackpot.toFixed(2));
  localStorage.setItem("balance",bal.toFixed(2));
 
- addGame(bet,win);
- if(win>0) logTx("Slots Win",win); else logTx("Slots",-bet);
-
- res.innerText=win>0?"WIN $"+win.toFixed(2):"No win";
- j.innerHTML=jp.toFixed(2);
+ addGame(betAmt,payout);
+ 
+ if(payout===0 && freeSpins<=0){
+ logTx("Slots Spin", -betAmt, "Spin");
 }
 
-j.innerHTML=parseFloat(localStorage.getItem("jackpot")).toFixed(2);
+ free.innerHTML=freeSpins>0?"Free Spins: "+freeSpins:"";
+}
+
 </script>
 
+<style>
+.execTable{background:radial-gradient(circle,#200,#000)}
+#reels{display:flex;justify-content:center;gap:10px;margin:20px}
+.slot{width:50px;height:70px;background:#111;border-radius:10px;font-size:32px;display:flex;align-items:center;justify-content:center}
+.gold{border:1px solid gold;box-shadow:0 0 18px rgba(255,215,0,.2)}
+</style>
+
 </div>
+
 </body>
 </html>

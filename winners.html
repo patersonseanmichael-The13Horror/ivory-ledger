@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>High Roller Winners</title>
+<title>High Roller Winners — The Ivory Ledger</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -11,42 +11,41 @@
 
 <h1>High Roller Winners</h1>
 
-<div id="winners"></div>
+<div id="winners" style="width:100%;"></div>
 
+<br>
 <button onclick="location.href='members.html'">Return</button>
-
-<script>
-function mobile(){
-  return "04******" + Math.floor(Math.random()*90+10);
-}
-
-function win(){
-  return (Math.floor(Math.random()*80+20)*1000).toLocaleString();
-}
-
-function randomDate(){
-  let now = new Date();
-  let past = new Date(now.getTime() - Math.random()*48*60*60*1000);
-  return past.toLocaleString();
-}
-
-const tiers=["Ground","Premium","Executive","Sovereign"];
-
-for(let i=0;i<10;i++){
-  let d=document.createElement("div");
-  let tier=tiers[Math.floor(Math.random()*4)];
-  d.className="winnerRow tier"+tier;
-  d.innerHTML=
-    mobile()+" — $"+win()+
-    "<br><small>"+randomDate()+"</small>";
-  winners.appendChild(d);
-}
-  setTimeout(()=>location.reload(),600000);
-</script>
 
 </div>
 
+<script>
+function randomMobile(){
+  let end = Math.floor(Math.random()*90 + 10);
+  return "04******" + end;
+}
+
+function randomWin(){
+  return (Math.floor(Math.random()*80 + 20) * 1000).toLocaleString();
+}
+
+const tiers = [
+  {name:"Ground", class:"tierGround"},
+  {name:"Premium", class:"tierPremium"},
+  {name:"Executive", class:"tierExecutive"},
+  {name:"Sovereign", class:"tierSovereign"}
+];
+
+let container = document.getElementById("winners");
+
+for(let i=0;i<10;i++){
+  let tier = tiers[Math.floor(Math.random()*tiers.length)];
+
+  let row = document.createElement("div");
+  row.className = "winnerRow " + tier.class;
+  row.innerHTML = randomMobile() + " — $" + randomWin() + " <span>(" + tier.name + ")</span>";
+  container.appendChild(row);
+}
+</script>
+
 </body>
 </html>
-
-

@@ -1,78 +1,124 @@
 <!DOCTYPE html>
 <html>
-<head><link rel="stylesheet" href="style.css"></head>
+<head>
+<title>Player Profile</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
 <body>
 
 <div class="center">
 
-<h1>Profile</h1>
+<h1>Your Profile</h1>
 
-<div class="stats">
-<div class="card">Balance<br>$<span id="b"></span></div>
-<div class="card">Wagered<br>$<span id="w"></span></div>
-<div class="card">Won<br>$<span id="o"></span></div>
-<div class="card">Games<br><span id="g"></span></div>
-</div>
-
-<p>Tier: <span id="tier"></span></p>
-<p>Rollover: <span id="roll"></span>/220</p>
-
-<button id="withdraw" disabled onclick="wd()">Withdraw $22</button>
-
-<h3>Deposit</h3>
 <div class="paybox">
-PayID / Osko<br>
-Name: Sean Paterson<br>
-PayID: 0417 979 350<br>
-Reason: Online Shopping<br><br>
-<input type="file">
-</div>
 
-<button onclick="daily()">Daily Bonus</button>
-<p id="msg"></p>
+<h3 id="tierBadge"></h3>
+
+<p>Balance: $<span id="bal"></span></p>
+<p>Total Wagered: $<span id="wag"></span></p>
+<p>Total Won: $<span id="won"></span></p>
+<p>Games Played: <span id="games"></span></p>
+
+<hr>
+
+<p>Signup Bonus: $22</p>
+<p>Rollover Progress: $<span id="roll"></span> / 220</p>
+<p id="withdrawStatus"></p>
+
+<hr>
+
+<button onclick="dailyBonus()">Claim Daily Bonus</button>
+<p id="dailyMsg"></p>
+
+</div>
 
 <button onclick="location.href='members.html'">Return</button>
 
 <script>
-function logTx(t,a,n){
- let tx=JSON.parse(localStorage.getItem("tx")||"[]");
- tx.unshift({time:new Date().toLocaleString(),type:t,amount:a,note:n});
- localStorage.setItem("tx",JSON.stringify(tx.slice(0,100)));
+function logTx(type, amount, note){let tx=JSON.parse(localStorage.getItem("tx")||"[]");tx.unshift({time:new Date().toLocaleString(),type:type,amount:amount,note:note||""});tx=tx.slice(0,100);localStorage.setItem("tx",JSON.stringify(tx));}
+
+/* ---------- Load Stats ---------- */
+
+let balance=parseFloat(localStorage.getItem("balance")||0);
+let wagered=parseFloat(localStorage.getItem("wagered")||0);
+let won=parseFloat(localStorage.getItem("won")||0);
+let games=parseInt(localStorage.getItem("games")||0);
+let tier=localStorage.getItem("tier")||"Ground";
+
+/* ---------- Tier Badge ---------- */
+
+tierBadge.innerHTML="Tier: "+tier;
+
+if(tier==="Executive"){
+ tierBadge.style.color="gold";
+}else if(tier==="Premium"){
+ tierBadge.style.color="silver";
+}else{
+ tierBadge.style.color="white";
 }
 
-let bal=parseFloat(localStorage.getItem("balance"));
-let wag=parseFloat(localStorage.getItem("wagered"));
-let won=parseFloat(localStorage.getItem("won"));
-let games=parseInt(localStorage.getItem("games"));
-let t=localStorage.getItem("tier");
+/* ---------- Signup Bonus ---------- */
 
-b.innerHTML=bal.toFixed(2);
-w.innerHTML=wag;o.innerHTML=won;g.innerHTML=games;
-tier.innerHTML=t;
-
-roll.innerHTML=Math.min(wag,220);
-
-if(wag>=220) withdraw.disabled=false;
-
-function wd(){
- bal-=22;
- localStorage.setItem("balance",bal);
- logTx("Withdrawal",-22,"Signup");
- alert("Withdrawal Requested");
+if(!localStorage.getItem("signupBonus")){
+ balance+=22;
+ localStorage.setItem("signupBonus","true");
+ localStorage.setItem("balance",balance.toFixed(2));
 }
 
-function daily(){
- let d=new Date().toDateString();
- if(localStorage.getItem("daily")==d){msg.innerText="Already claimed";return;}
- let bonus=t==="Executive"?1000:t==="Premium"?500:250;
- bal+=bonus;
- localStorage.setItem("balance",bal);
- localStorage.setItem("daily",d);
- logTx("Daily Bonus",bonus,"Tier");
- msg.innerText="+$"+bonus;
+/* ---------- Rollover ---------- */
+
+let rollover=Math.min(wagered,220);
+roll.innerHTML=rollover.toFixed(2);
+
+if(rollover>=220){
+ withdrawStatus.innerHTML="Withdrawals Unlocked";
+ withdrawStatus.style.color="lime";
+}else{
+ withdrawStatus.innerHTML="Withdrawal Locked";
+ withdrawStatus.style.color="crimson";
 }
+if(!localStorage.getItem("signupWithdrawLogged")){logTx("Withdrawal", -22, "Signup withdrawal");localStorage.setItem("signupWithdrawLogged","true");}
+
+/* ---------- Display ---------- */
+
+bal.innerHTML=balance.toFixed(2);
+wag.innerHTML=wagered.toFixed(2);
+won.innerHTML=won.toFixed(2);
+games.innerHTML=games;
+
+/* ---------- Daily Bonus ---------- */
+
+function dailyBonus(){
+ let today=new Date().toDateString();
+ let last=localStorage.getItem("daily");
+
+ if(last===today){
+   dailyMsg.innerHTML="Already claimed today";
+   return;
+ }
+
+ let bonus=250;
+
+ if(tier==="Premium") bonus=500;
+ if(tier==="Executive") bonus=1000;
+
+ balance+=bonus;
+ localStorage.setItem("balance",balance.toFixed(2));
+ localStorage.setItem("daily",today);
+
+ dailyMsg.innerHTML="Daily Bonus +$"+bonus;
+ bal.innerHTML=balance.toFixed(2);
+}
+
+
 </script>
 
+<style>
+hr{opacity:.2;margin:10px 0}
+</style>
+
 </div>
+
 </body>
 </html>

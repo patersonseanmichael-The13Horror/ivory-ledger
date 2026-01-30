@@ -4,30 +4,49 @@
 <title>The Ivory Ledger</title>
 <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<div class="center hero">
+<div class="center">
+
 <img src="logo.png" class="logo">
+
 <h1>The Ivory Ledger</h1>
-<p>Private Executive Casino</p>
 
-<button onclick="enter()">Enter</button>
+<p class="tagline">Forged in Courage. Sealed in Wealth.</p>
+
+<p class="lore">
+Born under pressure. Tempered by challenge.<br><br>
+
+The Black Bull was tested from youth — every obstacle shaping strength, wisdom and resolve. Where others folded, he advanced.
+
+<br><br>
+
+The Ivory Ledger is not chance.<br>
+It is destiny formalized.<br><br>
+
+You do not arrive here by accident.<br>
+Entry is earned.
+</p>
+
+<a href="https://docs.google.com/forms/d/e/1FAIpQLSdvFUmhZHdWffZ7Cs2MHab0Fugwaop0EIoHhaKrRl3hh783ZA/viewform?usp=header">
+<button>Request Consideration</button>
+</a>
+<br><br>
+<button onclick="location.href='login.html'">Member Login</button>
+
+<br><br>
+
+<a href="terms.html" style="color:#C9A24D;font-size:12px;">Terms & Conditions</a>
+<hr>
+
+<p style="font-size:12px;opacity:0.8;">
+<a href="terms.html">Terms</a> |
+<a href="privacy.html">Privacy</a> |
+<a href="responsibilities.html">Responsibilities</a> |
+<a href="responsible.html">Responsible Gaming</a>
+</p>
 </div>
-
-<script>
-function enter(){
- if(!localStorage.getItem("balance")){
-  localStorage.setItem("balance","22");
-  localStorage.setItem("tier","Ground");
-  localStorage.setItem("wagered","0");
-  localStorage.setItem("won","0");
-  localStorage.setItem("games","0");
-  localStorage.setItem("jackpot","31986.32");
- }
- location.href="members.html";
-}
-</script>
 
 </body>
 </html>
-
