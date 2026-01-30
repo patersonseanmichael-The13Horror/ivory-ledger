@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>More Chilli — Ivory Ledger</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="center execTable">
+<h1>More Chilli</h1>
+
+<div class="paybox gold">
+Player: <span id="player"></span><br>
+Balance: $<span id="bal"></span><br><br>
+💎 ULTRA JACKPOT 💎<br>
+$<span id="jackpot"></span>
+</div>
+
+<div class="paybox">
+Bet:
+<button onclick="chg(-0.10)">−</button>
+$<span id="bet">0.10</span>
+<button onclick="chg(0.10)">+</button><br><br>
+<button onclick="spin()">SPIN</button>
+</div>
+
+<div id="reels"></div>
+<div id="result"></div>
+<button class="ghostBtn" onclick="location.href='slots.html'">Back</button>
+
+<script>
+let bet=0.10,MIN=0.10,MAX=25;
+let symbols=['🌶️', '🔥', '💎', '💰', '⭐'];
+const JACKPOT_ODDS=10000;
+const JMIN=10500,JMAX=122984.21;
+
+player.innerHTML=localStorage.getItem("memberName")||"Guest";
+
+function bal(){return parseFloat(localStorage.getItem("balance")||0);}
+function setBal(v){localStorage.setItem("balance",v.toFixed(2));}
+function refresh(){balEl.innerHTML=bal().toFixed(2);}
+var balEl=document.getElementById("bal");refresh();
+
+function weekKey(){let d=new Date(),day=d.getDay();let diff=d.getDate()-day+(day===0?-6:1);return new Date(d.setDate(diff)).toDateString();}
+
+let jp=parseFloat(localStorage.getItem("jackpot")||51655.71);
+if(localStorage.getItem("jackpotWeek")!==weekKey()){jp=Math.random()*(JMAX-JMIN)+JMIN;localStorage.setItem("jackpotWeek",weekKey());}
+localStorage.setItem("jackpot",jp.toFixed(2));
+jackpot.innerHTML=jp.toFixed(2);
+
+function logTx(t,a,n){let tx=JSON.parse(localStorage.getItem("tx")||"[]");tx.unshift({time:new Date().toLocaleString(),type:t,amount:a,note:n||""});tx=tx.slice(0,100);localStorage.setItem("tx",JSON.stringify(tx));}
+function addGame(w,wins){let wg=parseFloat(localStorage.getItem("wagered")||0);let wo=parseFloat(localStorage.getItem("won")||0);let g=parseInt(localStorage.getItem("games")||0);wg+=w;if(wins>0)wo+=wins;g++;localStorage.setItem("wagered",wg.toFixed(2));localStorage.setItem("won",wo.toFixed(2));localStorage.setItem("games",g);}
+
+function chg(v){bet+=v;if(bet<MIN)bet=MIN;if(bet>MAX)bet=MAX;bet=Math.round(bet*100)/100;document.getElementById("bet").innerHTML=bet.toFixed(2);}
+
+function spin(){let b=bal();if(b<bet){alert("Insufficient balance");return;}b-=bet;jp+=bet*0.08;reels.innerHTML="";let row=[];
+for(let i=0;i<5;i++){let s=symbols[Math.floor(Math.random()*symbols.length)];row.push(s);let d=document.createElement("div");d.className="slot";d.innerHTML=s;reels.appendChild(d);}
+let pay=0;if(row[0]==row[1]&&row[1]==row[2])pay=bet*4;if(row.every(r=>r==row[0]))pay=bet*25;
+if(Math.floor(Math.random()*JACKPOT_ODDS)==1){pay+=jp;result.innerHTML="💎 JACKPOT WON $"+jp.toFixed(2);logTx("Jackpot",jp,"Ultra Rare");jp=Math.random()*(JMAX-JMIN)+JMIN;}
+else if(pay>0)result.innerHTML="WIN +$"+pay.toFixed(2);else result.innerHTML="No win";
+if(pay>0){b+=pay;logTx("More Chilli Win",pay,"Slots");}else logTx("More Chilli Spin",-bet,"Spin");
+setBal(b);localStorage.setItem("jackpot",jp.toFixed(2));jackpot.innerHTML=jp.toFixed(2);addGame(bet,pay);refresh();}
+</script>
+
+<style>
+.execTable{background:radial-gradient(circle,#111,#000)}
+#reels{display:flex;justify-content:center;gap:10px;margin:20px}
+.slot{width:55px;height:75px;background:#111;border-radius:12px;font-size:34px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 10px rgba(255,215,0,.25)}
+.gold{border:1px solid gold;box-shadow:0 0 25px rgba(255,215,0,.4)}
+</style>
+</div></body></html>
