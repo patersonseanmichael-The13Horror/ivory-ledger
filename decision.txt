@@ -1,1 +1,1 @@
-accepted.html
+declined.html
