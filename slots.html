@@ -1,20 +1,66 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>Slots — The Ivory Ledger</title>
-<link rel="stylesheet" href="style.css">
-</head>
-
+<head><link rel="stylesheet" href="style.css"></head>
 <body>
+
 <div class="center">
+<h1>Executive Slots</h1>
 
-<h1>Slots Gallery</h1>
+<div class="reels" id="r"></div>
 
-<p class="lore">
-Momentum meets chance.
+<p>Jackpot: $<span id="j"></span></p>
 
-Let the reels speak.
-</p>
+<button onclick="spin()">Spin ($0.10)</button>
+<p id="res"></p>
+
+<button onclick="location.href='members.html'">Return</button>
+
+<script>
+let symbols=["🍒","💎","7","🐂","🔒"];
+let bet=.1;
+
+function logTx(t,a){let tx=JSON.parse(localStorage.getItem("tx")||"[]");tx.unshift({time:new Date().toLocaleString(),type:t,amount:a});localStorage.setItem("tx",JSON.stringify(tx));}
+function addGame(w,win){
+ localStorage.setItem("wagered",parseFloat(localStorage.getItem("wagered"))+w);
+ localStorage.setItem("won",parseFloat(localStorage.getItem("won"))+(win||0));
+ localStorage.setItem("games",parseInt(localStorage.getItem("games"))+1);
+}
+
+function spin(){
+ let bal=parseFloat(localStorage.getItem("balance"));
+ if(bal<bet)return;
+ bal-=bet;
+
+ let reels=[];
+ for(let i=0;i<5;i++) reels.push(symbols[Math.floor(Math.random()*symbols.length)]);
+ r.innerHTML=reels.join(" ");
+
+ let win=0;
+ if(reels.every(x=>x===reels[0])){
+  win=bet*50;
+ }
+
+ let jp=parseFloat(localStorage.getItem("jackpot"));
+ jp+=bet;
+ if(Math.random()<0.00005){
+  win+=jp;
+  jp=1000;
+  logTx("Jackpot",win);
+ }
+
+ bal+=win;
+ localStorage.setItem("jackpot",jp.toFixed(2));
+ localStorage.setItem("balance",bal.toFixed(2));
+
+ addGame(bet,win);
+ if(win>0) logTx("Slots Win",win); else logTx("Slots",-bet);
+
+ res.innerText=win>0?"WIN $"+win.toFixed(2):"No win";
+ j.innerHTML=jp.toFixed(2);
+}
+
+j.innerHTML=parseFloat(localStorage.getItem("jackpot")).toFixed(2);
+</script>
 
 </div>
 </body>
