@@ -249,6 +249,61 @@ input{
   box-shadow:0 0 30px rgba(0,0,0,.7);
 }
 
+/* === Mystic Bull Executive Members Background === */
+
+.mysticBull {
+  position: relative;
+  min-height: 100vh;
+
+  background:
+    radial-gradient(circle at top, rgba(255,215,120,.15), transparent 60%),
+    linear-gradient(180deg, #02040a 0%, #070b16 40%, #000 100%),
+    url("images/ancient-bull.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+
+  box-shadow: inset 0 0 200px rgba(0,0,0,.85);
+}
+
+/* luxury gold mist overlay */
+.mysticBull::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255,215,0,.18), transparent 55%),
+    radial-gradient(circle at 80% 70%, rgba(255,180,60,.12), transparent 60%);
+  pointer-events:none;
+}
+
+/* subtle cosmic shimmer */
+.mysticBull::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    repeating-radial-gradient(circle, rgba(255,255,255,.03) 0 1px, transparent 1px 4px);
+  opacity:.25;
+  pointer-events:none;
+}
+
+/* polish existing panels */
+.mysticBull .paybox,
+.mysticBull .execTable,
+.mysticBull .card{
+  background:rgba(0,0,0,.55);
+  border:1px solid rgba(255,215,0,.25);
+  box-shadow:0 0 25px rgba(255,215,0,.15);
+  backdrop-filter: blur(6px);
+}
+
+/* headline glow */
+.mysticBull h1{
+  text-shadow:0 0 25px rgba(255,215,0,.4);
+}
+
 /* Mobile polish */
 @media(max-width:600px){
   h1{font-size:22px;}
