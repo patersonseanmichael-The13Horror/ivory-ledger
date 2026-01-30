@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="center">
+
+<h1>Admin Dashboard</h1>
+
+<div id="notAdmin"></div>
+
+<canvas id="chart" width="300" height="200"></canvas>
+
+<div id="stats"></div>
+
+<button onclick="location.href='members.html'">Return</button>
+
+<script>
+if(localStorage.getItem("admin")!=="Sean Paterson"){
+ notAdmin.innerHTML="Access Denied";
+ throw "Not admin";
+}
+
+let hist=JSON.parse(localStorage.getItem("balanceHistory")||"[]");
+let ctx=document.getElementById("chart").getContext("2d");
+
+let max=Math.max(...hist.map(h=>h.bal),10);
+
+ctx.beginPath();
+ctx.moveTo(0,200);
+
+hist.forEach((h,i)=>{
+ let x=(i/(hist.length-1||1))*300;
+ let y=200-(h.bal/max)*180;
+ ctx.lineTo(x,y);
+});
+
+ctx.strokeStyle="lime";
+ctx.lineWidth=2;
+ctx.stroke();
+
+let tx=JSON.parse(localStorage.getItem("tx")||"[]");
+
+stats.innerHTML=`
+<p>Total Transactions: ${tx.length}</p>
+<p>Total Wagered: $${localStorage.getItem("wagered")||0}</p>
+<p>Total Won: $${localStorage.getItem("won")||0}</p>
+<p>Games Played: ${localStorage.getItem("games")||0}</p>
+`;
+</script>
+
+</div>
+
+</body>
+</html>
