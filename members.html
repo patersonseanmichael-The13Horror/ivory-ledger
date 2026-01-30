@@ -1,40 +1,55 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>Members — The Ivory Ledger</title>
-<link rel="stylesheet" href="style.css">
-</head>
-
+<head><link rel="stylesheet" href="style.css"></head>
 <body>
 
 <div class="center">
 
 <h1>Members Portal</h1>
+<p>Balance: $<span id="bal"></span></p>
 
-<div id="balance"></div>
+<div id="winners"></div>
 
-<br>
-
-  <button onclick="location.href='profile.html'">Profile</button>
-<button onclick="location.href='casino.html'">Casino Floor</button>
-<button onclick="location.href='deposit.html'">Deposit</button>
-<button onclick="location.href='winners.html'">High Roller Winners</button>
-<button onclick="location.href='terms.html'">Terms</button>
-
-<script>
-let bal = parseFloat(localStorage.getItem("balance"));
-
-if(isNaN(bal)){
-  bal = 0;
-  localStorage.setItem("balance","0.00");
-}
-
-document.getElementById("balance").innerHTML =
-"Wallet Balance: $" + bal.toFixed(2);
-</script>
+<button onclick="location.href='casino.html'">Casino</button>
+<button onclick="location.href='profile.html'">Profile</button>
+<button onclick="location.href='transactions.html'">Transactions</button>
+<button onclick="location.href='admin.html'">Admin</button>
 
 </div>
 
+<script>
+if(!localStorage.getItem("admin")) localStorage.setItem("admin","Sean Paterson");
+
+function balUpd(){
+ bal.innerHTML=parseFloat(localStorage.getItem("balance")).toFixed(2);
+}
+balUpd();
+
+function logBalance(){
+ let h=JSON.parse(localStorage.getItem("balanceHistory")||"[]");
+ h.push({bal:parseFloat(localStorage.getItem("balance")),time:new Date().toLocaleString()});
+ localStorage.setItem("balanceHistory",JSON.stringify(h.slice(-50)));
+}
+logBalance();
+
+// High roller winners
+function genWin(){
+ let phone="04******"+Math.floor(10+Math.random()*89);
+ let amt=20000+Math.floor(Math.random()*20000);
+ return `${phone} won $${amt} — ${new Date().toLocaleTimeString()}`;
+}
+function drawWinners(){
+ winners.innerHTML="<h3>High Rollers</h3>";
+ for(let i=0;i<10;i++){
+  let d=document.createElement("div");
+  d.className="card winner";
+  d.innerText=genWin();
+  winners.appendChild(d);
+ }
+}
+drawWinners();
+setInterval(drawWinners,600000);
+</script>
+
 </body>
 </html>
-
