@@ -6,9 +6,10 @@
 </head>
 <body>
 
-<div class="center">
+<div class="center hero">
+<img src="images/logo.png" class="logo">
 <h1>The Ivory Ledger</h1>
-<p>Exclusive Members Casino</p>
+<p>Private Executive Casino</p>
 
 <button onclick="enter()">Enter</button>
 </div>
@@ -16,8 +17,12 @@
 <script>
 function enter(){
  if(!localStorage.getItem("balance")){
-   localStorage.setItem("balance","100");
-   localStorage.setItem("tier","Ground");
+  localStorage.setItem("balance","22");
+  localStorage.setItem("tier","Ground");
+  localStorage.setItem("wagered","0");
+  localStorage.setItem("won","0");
+  localStorage.setItem("games","0");
+  localStorage.setItem("jackpot","31986.32");
  }
  location.href="members.html";
 }
