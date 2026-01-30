@@ -1,6 +1,6 @@
 body{
  margin:0;
- background:#000 url("images/background.jpg") center/cover fixed;
+ background:#000 url("background.jpg") center/cover fixed;
  color:white;
  font-family:Arial;
 }
@@ -35,3 +35,4 @@ input{padding:8px;border-radius:10px}
 .reels{display:flex;justify-content:center;font-size:36px}
 
 .winner{color:gold}
+
