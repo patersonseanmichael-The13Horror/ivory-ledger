@@ -7,8 +7,54 @@
 
 <body>
 
+  <div class="activity">
+  <h3>Simulated Member Activity</h3>
+  <ul id="feed"></ul>
+</div>
+
 <div class="center">
 
+<script>
+const feed = document.getElementById("feed");
+
+function maskNumber() {
+  const start = "04";
+  const end = Math.floor(10 + Math.random()*89);
+  return `${start}******${end}`;
+}
+
+function rand(min,max){
+  return Math.floor(Math.random()*(max-min+1))+min;
+}
+
+function addEntry(type){
+  const phone = maskNumber();
+  const time = new Date().toLocaleString();
+
+  let amount =
+    type === "Deposit"
+    ? rand(100,500)
+    : rand(5000,14000);
+
+  const li = document.createElement("li");
+  li.innerHTML = `${time} — ${type}: ${phone} — $${amount}`;
+  feed.prepend(li);
+
+  if(feed.children.length > 8){
+    feed.removeChild(feed.lastChild);
+  }
+}
+
+// Initial load
+addEntry("Deposit");
+addEntry("Withdrawal");
+
+// Every 15 minutes
+setInterval(()=>{
+  addEntry(Math.random() > 0.5 ? "Deposit" : "Withdrawal");
+}, 900000);
+</script>
+  
 <img src="logo.png" class="logo">
 
 <h1>The Ivory Ledger</h1>
