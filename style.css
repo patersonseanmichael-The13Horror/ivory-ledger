@@ -315,3 +315,16 @@ url("ancient-bull.jpg");
 #winners{
   display:block !important;
 }
+
+.activity {
+  color: gold;
+  background: rgba(0,0,0,.6);
+  padding:20px;
+  border-radius:12px;
+}
+
+.activity li {
+  list-style:none;
+  padding:6px 0;
+  border-bottom:1px solid rgba(255,215,0,.2);
+}
